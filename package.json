@@ -6,7 +6,10 @@
     "express": "^5.1.0",
     "bcryptjs": "^3.0.2",
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "dotenv": "^16.5.0",
+    "cors":"^2.8.5",
+    "express-session": "^1.18.1"
   },
   "scripts": {
     "setupDatabase": "node ./serverSSR/database/createDatabase.js",

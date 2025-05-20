@@ -20,6 +20,7 @@ await database.exec(`
 
 if(deleteMode) {
     await database.run('INSERT INTO users (username, password, isAdmin, rank, amountofLoot) VALUES ("adminTest", "1234", "true", "raider", "4")');
+    await database.run('INSERT INTO users (username, password, isAdmin, rank, amountofLoot) VALUES ("normalUser", "1234", "false", "trial", "0")');
 }
 
 const users = await database.all('SELECT * FROM users');
