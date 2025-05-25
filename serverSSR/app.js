@@ -2,7 +2,7 @@ import express from 'express';
 import 'dotenv/config';
 import session from 'express-session';
 import cors from 'cors';
-
+import raiderRouter from './routers/raiderRouter.js';
 
 
 const app = express();
@@ -19,7 +19,7 @@ app.use(session({
     cookie: {secure: false}
 }));
 
-app.use(authRouter);
+app.use(raiderRouter);
 
 const PORT = Number(provess.env.PORT) || 8080;
 app.listen(PORT, () => console.log("Server is running on", PORT));
