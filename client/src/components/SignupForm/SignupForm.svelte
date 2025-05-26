@@ -5,31 +5,25 @@
   let username = "";
   let password = "";
 
-  function goToSignup() {
-  dispatch('signupRequested'); // This must match the event name App.svelte is listening for
-}
-
-
-  async function login() {
-    const res = await fetch('http://localhost:8080/auth/login', {
+  async function signup() {
+    const res = await fetch('http://localhost:8080/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ username, password })
     });
 
-    const data = await res.json();
     if (res.ok) {
-      dispatch('loginSuccess');
+      dispatch('signupSuccess');
     } else {
-      alert(data.message || 'Login failed');
+      const data = await res.json();
+      alert(data.message || 'Signup failed');
     }
   }
 </script>
 
-<form on:submit|preventDefault={login}>
+<form on:submit|preventDefault={signup}>
   <input bind:value={username} placeholder="Username" required />
   <input type="password" bind:value={password} placeholder="Password" required />
-  <button type="submit">Login</button>
-  <button type="button" on:click={goToSignup}>Sign Up</button>
+  <button type="submit">Sign Up</button>
 </form>

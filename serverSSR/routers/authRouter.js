@@ -12,7 +12,6 @@ router.post('/auth/login', async (req, res) => {
 
 	if (!user) return res.status(401).send({ message: 'Invalid username' });
 
-    console.log('Login attempt:', { password, user });
 	const match = await bcrypt.compare(password, user.userPassword);
 	if (!match) return res.status(401).send({ message: 'Invalid password' });
 
@@ -35,5 +34,25 @@ router.post('/auth/logout', (req, res) => {
 		res.send({ message: 'Logged out' });
 	});
 });
+
+// POST: Signup route
+router.post('/auth/signup', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await db.execute(`
+      INSERT INTO users (username, userPassword, isAdmin, userrank, amountofLoot)
+      VALUES (?, ?, 'false', 'trial', 0)
+    `, [username, hashedPassword]);
+
+    res.status(201).send({ message: 'User created' });
+  } catch (err) {
+    console.error('Signup error:', err);
+    res.status(500).send({ message: 'Failed to create user' });
+  }
+});
+
 
 export default router;

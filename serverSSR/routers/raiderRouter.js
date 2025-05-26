@@ -60,4 +60,22 @@ router.delete('/auth/user/:id', isAuthenticated, isAdmin, async (req, res) => {
   }
 });
 
+// PATCH: toggle admin status
+router.patch('/auth/user/:id/toggle-admin', isAuthenticated, isAdmin, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [rows] = await db.execute('SELECT isAdmin FROM users WHERE id = ?', [id]);
+    if (rows.length === 0) return res.status(404).send({ message: 'User not found' });
+
+    const currentStatus = rows[0].isAdmin === 'true';
+    const newStatus = !currentStatus ? 'true' : 'false';
+
+    await db.execute('UPDATE users SET isAdmin = ? WHERE id = ?', [newStatus, id]);
+    res.send({ message: `Admin status updated to ${newStatus}` });
+  } catch (err) {
+    res.status(500).send({ error: 'Failed to toggle admin status' });
+  }
+});
+
+
 export default router;

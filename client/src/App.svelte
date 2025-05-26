@@ -1,10 +1,12 @@
 <script>
   import { onMount } from 'svelte';
-  import toast from 'svelte-french-toast';
+  import toast, { Toaster } from 'svelte-french-toast';
   import LoginForm from './components/LoginForm/LoginForm.svelte';
+  import SignupForm from './components/SignupForm/SignupForm.svelte';
   import RaiderManager from './components/Raidermanager/RaiderManager.svelte';
 
   let user = null;
+  let currentPage = 'login'; // 'login', 'signup', 'admin', 'profile'
 
   async function getUser() {
     const res = await fetch('http://localhost:8080/auth/me', {
@@ -13,6 +15,7 @@
     if (res.ok) {
       const data = await res.json();
       user = data.user;
+      currentPage = user.isAdmin === 'true' ? 'admin' : 'profile';
     }
   }
 
@@ -23,26 +26,29 @@
     });
     toast.success('Logged out');
     user = null;
-    window.location.href = '/'; // or use a router redirect
+    currentPage = 'login';
   }
 
   onMount(getUser);
 </script>
 
-{#if user}
-  {#if user.isAdmin === 'true'}
-    <!-- Admin sees RaiderManager component -->
-    <RaiderManager />
-  {:else}
-    <!-- Normal user sees their profile -->
-    <div class="profile">
-      <h2>Welcome, {user.username}</h2>
-      <p><strong>Rank:</strong> {user.userrank}</p>
-      <p><strong>Loot received:</strong> {user.amountofLoot}</p>
-      <button on:click={logout}>Logout</button>
-    </div>
-  {/if}
-{:else}
-  <!-- Show login form -->
-  <LoginForm on:loginSuccess={getUser} />
+<Toaster />
+
+{#if currentPage === 'login'}
+  <LoginForm
+    on:loginSuccess={() => getUser()}
+    on:signupRequested={() => (currentPage = 'signup')}
+  />
+{:else if currentPage === 'signup'}
+  <SignupForm on:signupSuccess={() => (currentPage = 'login')} />
+{:else if currentPage === 'admin'}
+  <RaiderManager on:logout={logout} />
+{:else if currentPage === 'profile'}
+  <div class="profile">
+    <h2>Welcome, {user.username}</h2>
+    <p><strong>Rank:</strong> {user.userrank}</p>
+    <p><strong>Loot received:</strong> {user.amountofLoot}</p>
+    <button on:click={logout}>Logout</button>
+  </div>
 {/if}
+

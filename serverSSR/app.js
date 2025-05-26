@@ -3,7 +3,7 @@ import 'dotenv/config';
 import session from 'express-session';
 import cors from 'cors';
 import raiderRouter from './routers/raiderRouter.js';
-import authRouter from './routers/authRouter.js'; // 👈 Add this
+import authRouter from './routers/authRouter.js';
 
 const app = express();
 
@@ -23,7 +23,7 @@ app.use(session({
 
 // Mount routers
 app.use(raiderRouter);
-app.use(authRouter); // 👈 Use it here too
+app.use(authRouter);
 
 const PORT = Number(process.env.PORT) || 8080;
 app.listen(PORT, () => console.log("Server is running on", PORT));
