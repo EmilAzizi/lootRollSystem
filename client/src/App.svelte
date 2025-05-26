@@ -1,11 +1,12 @@
 <script>
   import { onMount } from 'svelte';
+  import toast from 'svelte-french-toast';
+  import LoginForm from './components/LoginForm/LoginForm.svelte';
   import RaiderManager from './components/Raidermanager/RaiderManager.svelte';
-  import { Toaster } from 'svelte-french-toast';
 
   let user = null;
 
-  async function fetchMe() {
+  async function getUser() {
     const res = await fetch('http://localhost:8080/auth/me', {
       credentials: 'include'
     });
@@ -15,20 +16,33 @@
     }
   }
 
-  onMount(fetchMe);
+  async function logout() {
+    await fetch('http://localhost:8080/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+    toast.success('Logged out');
+    user = null;
+    window.location.href = '/'; // or use a router redirect
+  }
+
+  onMount(getUser);
 </script>
 
-<Toaster />
-
 {#if user}
-  <h1>Welcome, {user.username}</h1>
-
-  {#if user.isAdmin === 'true' || user.isAdmin === true}
+  {#if user.isAdmin === 'true'}
+    <!-- Admin sees RaiderManager component -->
     <RaiderManager />
   {:else}
-    <p>You are a raider. No admin access.</p>
+    <!-- Normal user sees their profile -->
+    <div class="profile">
+      <h2>Welcome, {user.username}</h2>
+      <p><strong>Rank:</strong> {user.userrank}</p>
+      <p><strong>Loot received:</strong> {user.amountofLoot}</p>
+      <button on:click={logout}>Logout</button>
+    </div>
   {/if}
-
 {:else}
-  <p>Please log in.</p>
+  <!-- Show login form -->
+  <LoginForm on:loginSuccess={getUser} />
 {/if}

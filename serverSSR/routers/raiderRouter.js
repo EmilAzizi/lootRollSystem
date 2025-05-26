@@ -15,7 +15,7 @@ function isAdmin(req, res, next) {
 // GET all raiders (non-admin users)
 router.get('/auth/raiders', isAuthenticated, isAdmin, async (req, res) => {
   try {
-    const [raiders] = await db.query('SELECT * FROM users WHERE isAdmin = ?', ['false']);
+    const [raiders] = await db.execute('SELECT * FROM users');
     res.send(raiders);
   } catch (error) {
     console.error(error);
@@ -40,7 +40,7 @@ router.patch('/auth/user/:id/rank', isAuthenticated, isAdmin, async (req, res) =
   const { id } = req.params;
   const { newRank } = req.body;
   try {
-    await db.execute('UPDATE users SET rank = ? WHERE id = ?', [newRank, id]);
+    await db.execute('UPDATE users SET userrank = ? WHERE id = ?', [newRank, id]);
     res.send({ message: 'Rank updated' });
   } catch (error) {
     console.error(error);

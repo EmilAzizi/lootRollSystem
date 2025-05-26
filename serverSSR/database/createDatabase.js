@@ -1,5 +1,10 @@
 import connection from "./connectionToDatabase.js";
+import bcrypt from "bcryptjs";
+import dotenv from 'dotenv';
 
+dotenv.config({path: './serverSSR/.env'});
+
+const hashedPassword = await bcrypt.hash("1234", 10);
 const deleteMode = process.argv.includes("--delete");
 
 if (deleteMode) {
@@ -23,11 +28,11 @@ console.log("Users table created.");
 if (deleteMode) {
     await connection.execute(
         `INSERT INTO users (username, userpassword, isAdmin, userrank, amountofLoot) VALUES (?, ?, ?, ?, ?)`,
-        ["adminTest", "1234", "true", "raider", 4]
+        ["Nymfalla", hashedPassword, "true", "raider", 4]
     );
     await connection.execute(
         `INSERT INTO users (username, userpassword, isAdmin, userrank, amountofLoot) VALUES (?, ?, ?, ?, ?)`,
-        ["normalUser", "1234", "false", "trial", 0]
+        ["Tswigg", hashedPassword, "false", "trial", 0]
     );
     console.log("Seeded initial users.");
 }

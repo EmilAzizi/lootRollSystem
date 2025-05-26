@@ -1,5 +1,7 @@
 import mysql from 'mysql2/promise'
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ path: './serverSSR/.env' });
+
 
 const connection = await mysql.createConnection({
     host: process.env.database_HOST,
