@@ -4,7 +4,6 @@ import { isAuthenticated } from '../util/authMiddleware.js';
 
 const router = Router();
 
-// Middleware: only allow admins (officers)
 function isAdmin(req, res, next) {
   if (req.session?.user?.isAdmin === 'true' || req.session?.user?.isAdmin === true) {
     return next();
@@ -12,7 +11,6 @@ function isAdmin(req, res, next) {
   return res.status(403).send({ message: 'Forbidden: Admins only' });
 }
 
-// GET all raiders (non-admin users)
 router.get('/auth/raiders', isAuthenticated, isAdmin, async (req, res) => {
   try {
     const [raiders] = await db.execute('SELECT * FROM users');
@@ -23,7 +21,6 @@ router.get('/auth/raiders', isAuthenticated, isAdmin, async (req, res) => {
   }
 });
 
-// PATCH: increment loot count
 router.patch('/auth/user/:id/increment-loot', isAuthenticated, isAdmin, async (req, res) => {
   const { id } = req.params;
   try {
@@ -36,7 +33,6 @@ router.patch('/auth/user/:id/increment-loot', isAuthenticated, isAdmin, async (r
   }
 });
 
-// PATCH: change raider rank
 router.patch('/auth/user/:id/rank', isAuthenticated, isAdmin, async (req, res) => {
   const { id } = req.params;
   const { newRank } = req.body;
@@ -50,7 +46,6 @@ router.patch('/auth/user/:id/rank', isAuthenticated, isAdmin, async (req, res) =
   }
 });
 
-// DELETE: remove a raider
 router.delete('/auth/user/:id', isAuthenticated, isAdmin, async (req, res) => {
   const { id } = req.params;
   try {
@@ -63,7 +58,6 @@ router.delete('/auth/user/:id', isAuthenticated, isAdmin, async (req, res) => {
   }
 });
 
-// PATCH: toggle admin status
 router.patch('/auth/user/:id/toggle-admin', isAuthenticated, isAdmin, async (req, res) => {
   const { id } = req.params;
   try {

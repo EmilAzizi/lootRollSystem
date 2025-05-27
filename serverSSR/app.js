@@ -16,7 +16,6 @@ const io = new Server(server, {
     }
 });
 
-// Middleware
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true
@@ -30,17 +29,11 @@ app.use(session({
     cookie: { secure: false }
 }));
 
-// Make io available in routes via req.io
 app.use((req, res, next) => {
     req.io = io;
     next();
 });
 
-// Routers
-app.use(raiderRouter);
-app.use(authRouter);
-
-// Socket.IO listeners
 io.on('connection', socket => {
     console.log('Socket connected:', socket.id);
 
@@ -53,6 +46,9 @@ io.on('connection', socket => {
     });
 });
 
-// Use server.listen, not app.listen
+
+app.use(raiderRouter);
+app.use(authRouter);
+
 const PORT = Number(process.env.PORT) || 8080;
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

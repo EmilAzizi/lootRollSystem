@@ -6,7 +6,7 @@
   import RaiderManager from './components/Raidermanager/RaiderManager.svelte';
 
   let user = null;
-  let currentPage = 'login'; // 'login', 'signup', 'admin', 'profile'
+  let currentPage = 'login';
 
   async function getUser() {
     const res = await fetch('http://localhost:8080/auth/me', {

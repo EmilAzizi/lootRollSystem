@@ -1,12 +1,13 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   const dispatch = createEventDispatcher();
+  import toast from 'svelte-french-toast';
 
   let username = "";
   let password = "";
 
   function goToSignup() {
-  dispatch('signupRequested'); // This must match the event name App.svelte is listening for
+  dispatch('signupRequested');
 }
 
 
@@ -21,8 +22,9 @@
     const data = await res.json();
     if (res.ok) {
       dispatch('loginSuccess');
+      toast.success(`Login successfull, welcome, ${username}`);
     } else {
-      alert(data.message || 'Login failed');
+      toast.error('Login failed');
     }
   }
 </script>

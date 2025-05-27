@@ -4,7 +4,6 @@ import db from '../database/connectionToDatabase.js';
 
 const router = Router();
 
-// POST: Login route
 router.post('/auth/login', async (req, res) => {
 	const { username, password } = req.body;
 	const [userRow] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
@@ -19,7 +18,6 @@ router.post('/auth/login', async (req, res) => {
 	res.send({ message: 'Login successful' });
 });
 
-// GET: Check session
 router.get('/auth/me', (req, res) => {
 	if (req.session?.user) {
 		res.send({ user: req.session.user });
@@ -28,14 +26,12 @@ router.get('/auth/me', (req, res) => {
 	}
 });
 
-// POST: Logout
 router.post('/auth/logout', (req, res) => {
 	req.session.destroy(() => {
 		res.send({ message: 'Logged out' });
 	});
 });
 
-// POST: Signup route
 router.post('/auth/signup', async (req, res) => {
   const { username, password } = req.body;
 

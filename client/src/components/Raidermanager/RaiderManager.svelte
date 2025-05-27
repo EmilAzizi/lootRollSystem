@@ -29,7 +29,7 @@
     });
     if (res.ok) {
       toast.success('Loot increased');
-      socket.emit('update'); // 🔁 notify others
+      socket.emit('update');
     }
   }
 
@@ -40,7 +40,7 @@
     });
     if (res.ok) {
       toast.success('Raider deleted');
-      socket.emit('update'); // 🔁 notify others
+      socket.emit('update');
     }
   }
 
@@ -53,7 +53,7 @@
     });
     if (res.ok) {
       toast.success('Rank updated');
-      socket.emit('update'); // 🔁 notify others
+      socket.emit('update');
     }
   }
 
@@ -64,7 +64,7 @@
     });
     if (res.ok) {
       toast.success('Admin status toggled');
-      socket.emit('update'); // 🔁 notify others
+      socket.emit('update');
     } else {
       toast.error('Failed to toggle admin');
     }
@@ -78,7 +78,6 @@
     dispatch('logout');
   }
 
-  // Listen for refresh from the server
   onMount(() => {
     fetchRaiders();
     socket.on('refresh', fetchRaiders);
@@ -99,7 +98,7 @@
   <div style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;">
     <p><strong>{raider.username}</strong> (Rank: {raider.userrank}) - Loot: {raider.amountofLoot}</p>
     <button on:click={() => incrementLoot(raider.id)}>+1 Loot</button>
-    <button on:click={() => deleteRaider(raider.id)}>🗑️ Delete</button>
+    <button on:click={() => deleteRaider(raider.id)}>Delete</button>
     <button on:click={() => toggleAdmin(raider.id)}>
       {raider.isAdmin === 'true' ? 'Remove Admin' : 'Make Admin'}
     </button>
