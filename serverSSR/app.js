@@ -35,14 +35,11 @@ app.use((req, res, next) => {
 });
 
 io.on('connection', socket => {
-    console.log('Socket connected:', socket.id);
 
     socket.on('update', () => {
-        socket.broadcast.emit('refresh');
     });
 
     socket.on('disconnect', () => {
-        console.log('Socket disconnected:', socket.id);
     });
 });
 
@@ -51,4 +48,4 @@ app.use(raiderRouter);
 app.use(authRouter);
 
 const PORT = Number(process.env.PORT) || 8080;
-server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+server.listen(PORT);
