@@ -33,16 +33,20 @@
 </script>
 
 <Toaster />
-
 {#if currentPage === 'login'}
+<h2>Welcome to the WoW Loot System</h2>
   <LoginForm
     on:loginSuccess={() => getUser()}
     on:signupRequested={() => (currentPage = 'signup')}
   />
 {:else if currentPage === 'signup'}
-  <SignupForm on:signupSuccess={() => (currentPage = 'login')} />
+<h2>Please create your player</h2>
+  <SignupForm 
+  on:signupSuccess={() => (currentPage = 'login')} 
+  on:goBack={() => (currentPage = 'login')} 
+/>
 {:else if currentPage === 'admin'}
-  <RaiderManager on:logout={logout} />
+  <RaiderManager user={user} on:logout={logout} />
 {:else if currentPage === 'profile'}
   <div class="profile">
     <h2>Welcome, {user.username}</h2>

@@ -1,16 +1,20 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import toast from 'svelte-french-toast';
   import { createEventDispatcher } from 'svelte';
+  import { io } from 'socket.io-client';
 
+  export let user;
+
+  const socket = io('http://localhost:8080');
   const dispatch = createEventDispatcher();
+
   let raiders = [];
 
   async function fetchRaiders() {
     const res = await fetch('http://localhost:8080/auth/raiders', {
       credentials: 'include'
     });
-
     if (res.ok) {
       raiders = await res.json();
     } else {
@@ -25,7 +29,7 @@
     });
     if (res.ok) {
       toast.success('Loot increased');
-      fetchRaiders();
+      socket.emit('update'); // 🔁 notify others
     }
   }
 
@@ -36,7 +40,7 @@
     });
     if (res.ok) {
       toast.success('Raider deleted');
-      fetchRaiders();
+      socket.emit('update'); // 🔁 notify others
     }
   }
 
@@ -49,7 +53,7 @@
     });
     if (res.ok) {
       toast.success('Rank updated');
-      fetchRaiders();
+      socket.emit('update'); // 🔁 notify others
     }
   }
 
@@ -60,7 +64,7 @@
     });
     if (res.ok) {
       toast.success('Admin status toggled');
-      fetchRaiders();
+      socket.emit('update'); // 🔁 notify others
     } else {
       toast.error('Failed to toggle admin');
     }
@@ -74,11 +78,21 @@
     dispatch('logout');
   }
 
-  onMount(fetchRaiders);
+  // Listen for refresh from the server
+  onMount(() => {
+    fetchRaiders();
+    socket.on('refresh', fetchRaiders);
+  });
+
+  onDestroy(() => {
+    socket.disconnect();
+  });
 </script>
 
+<h2 style="text-align: center;">Welcome, {user.username}</h2>
+
 <div class="logout-container">
-    <button on:click={logout}>Logout</button>
+  <button on:click={logout}>Logout</button>
 </div>
 
 {#each raiders as raider}
@@ -100,22 +114,21 @@
 {/each}
 
 <style>
-    .logout-container {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 999;
-}
+  .logout-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+  }
 
-.logout-container button {
-  padding: 0.75rem 1.5rem;
-  background-color: #111;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
+  .logout-container button {
+    padding: 0.75rem 1.5rem;
+    background-color: #111;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+  }
 </style>

@@ -28,6 +28,7 @@ router.patch('/auth/user/:id/increment-loot', isAuthenticated, isAdmin, async (r
   const { id } = req.params;
   try {
     await db.execute('UPDATE users SET amountofLoot = amountofLoot + 1 WHERE id = ?', [id]);
+    req.io.emit('refresh');
     res.send({ message: 'Loot incremented' });
   } catch (error) {
     console.error(error);
@@ -41,6 +42,7 @@ router.patch('/auth/user/:id/rank', isAuthenticated, isAdmin, async (req, res) =
   const { newRank } = req.body;
   try {
     await db.execute('UPDATE users SET userrank = ? WHERE id = ?', [newRank, id]);
+    req.io.emit('refresh');
     res.send({ message: 'Rank updated' });
   } catch (error) {
     console.error(error);
@@ -53,6 +55,7 @@ router.delete('/auth/user/:id', isAuthenticated, isAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     await db.execute('DELETE FROM users WHERE id = ?', [id]);
+    req.io.emit('refresh');
     res.send({ message: 'Raider deleted' });
   } catch (error) {
     console.error(error);
@@ -71,6 +74,7 @@ router.patch('/auth/user/:id/toggle-admin', isAuthenticated, isAdmin, async (req
     const newStatus = !currentStatus ? 'true' : 'false';
 
     await db.execute('UPDATE users SET isAdmin = ? WHERE id = ?', [newStatus, id]);
+    req.io.emit('refresh');
     res.send({ message: `Admin status updated to ${newStatus}` });
   } catch (err) {
     res.status(500).send({ error: 'Failed to toggle admin status' });

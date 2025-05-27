@@ -20,10 +20,16 @@
       alert(data.message || 'Signup failed');
     }
   }
+
+  function goBack() {
+    dispatch('goBack'); // 🔙 trigger event for parent
+  }
 </script>
 
 <form on:submit|preventDefault={signup}>
   <input bind:value={username} placeholder="Username" required />
   <input type="password" bind:value={password} placeholder="Password" required />
+
   <button type="submit">Sign Up</button>
+  <button type="button" on:click={goBack}>Back</button> <!-- 🔙 -->
 </form>
